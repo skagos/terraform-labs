@@ -1,10 +1,14 @@
-# 🧪 Floci-AZ Terraform Lab 01
+# Floci-AZ Terraform Lab 01
 
 This lab uses Terraform and the AzureRM provider to create Azure-style resources locally in Floci-AZ. It does not require an Azure subscription and does not create resources in Azure.
 
-It creates a resource group (`rg-lab01`), storage account (`lab01storage001`), and virtual network (`vnet-lab01`, `10.10.0.0/16`).
+The configuration creates:
 
-## 🧩 How the lab fits together
+- one resource group: `rg-lab01`
+- one storage account: `lab01storage001`
+- one virtual network: `vnet-lab01` with address space `10.10.0.0/16`
+
+## How the lab fits together
 
 ```text
 Labs/
@@ -35,9 +39,9 @@ Floci UI at localhost:4500
 Floci API at localhost:4501
 ```
 
-Complete the tools, clone, Compose override, and TLS steps in the [shared README](../README.md) first.
+Read the shared [`../README.md`](../README.md) first. It explains the required tools, how to clone `floci-ui`, the Compose override, and why the local TLS certificate must be trusted.
 
-## 1️⃣ Start the local Floci stack
+## 1. Start the local Floci stack
 
 From the `floci-ui` sibling directory:
 
@@ -58,7 +62,7 @@ Open the UI at <http://localhost:4500>.
 
 > The Floci UI is not a complete replacement for the Azure Portal. Supported resources may be visible there, but ARM resources such as resource groups and virtual networks may need to be verified through the API commands below.
 
-## 2️⃣ Initialize and validate Terraform
+## 2. Initialize and validate Terraform
 
 Return to this lab directory:
 
@@ -69,9 +73,9 @@ terraform fmt -check
 terraform validate
 ```
 
-`providers.tf` uses placeholder credentials. `environment = "stack"` and `metadata_host = "localhost:4577"` redirect AzureRM locally; `resource_provider_registrations = "none"` disables automatic Azure provider registration.
+The provider configuration in `providers.tf` deliberately uses placeholder credentials. `environment = "stack"` and `metadata_host = "localhost:4577"` redirect AzureRM to the local Floci-AZ endpoint, while `resource_provider_registrations = "none"` prevents automatic Azure resource-provider registration.
 
-## 3️⃣ Preview and apply
+## 3. Preview and apply
 
 ```powershell
 terraform plan
@@ -84,7 +88,7 @@ Confirm the apply by typing `yes`. On a clean lab, the plan should report:
 Plan: 3 to add, 0 to change, 0 to destroy.
 ```
 
-## 4️⃣ Verify Terraform state
+## 4. Verify Terraform state
 
 ```powershell
 terraform output
@@ -107,15 +111,15 @@ storage_account = "lab01storage001"
 virtual_network = "vnet-lab01"
 ```
 
-## 5️⃣ Verify directly in Floci-AZ
+## 5. Verify the resources directly in Floci-AZ
 
-These emulator queries prove the resources exist independently of Terraform state.
+These checks query the emulator rather than Terraform state, proving that the resources exist in Floci-AZ.
 
 ```powershell
 $subscriptionId = "00000000-0000-0000-0000-000000000001"
 ```
 
-### 🗂️ Resource group
+### Resource group
 
 ```powershell
 (Invoke-RestMethod `
@@ -124,7 +128,7 @@ Select-Object name, location, id |
 Format-Table -AutoSize
 ```
 
-### 📦 Storage account
+### Storage account
 
 ```powershell
 Invoke-RestMethod `
@@ -133,7 +137,7 @@ Select-Object name, location, id |
 Format-List
 ```
 
-### 🌐 Virtual network
+### Virtual network
 
 ```powershell
 Invoke-RestMethod `
@@ -142,7 +146,7 @@ Select-Object name, location, id |
 Format-List
 ```
 
-## 6️⃣ Clean up
+## 6. Clean up
 
 Destroy the emulated infrastructure:
 
@@ -150,7 +154,7 @@ Destroy the emulated infrastructure:
 terraform destroy
 ```
 
-After confirming with `yes`, `terraform state list` should be empty.
+After confirming with `yes`, `terraform state list` should return no resources.
 
 Stop the local services from the Floci UI directory:
 
@@ -165,11 +169,11 @@ To start the services again later:
 docker compose --profile multicloud up -d floci-az floci-api floci-ui
 ```
 
-## 🩺 Troubleshooting
+## Troubleshooting
 
 ### Certificate verification fails
 
-For `x509`, unknown-authority, or certificate-trust errors during `init`, `plan`, or `apply`, repeat the shared README's certificate steps. Download a fresh certificate after recreating Floci-AZ data or TLS files.
+If `terraform init`, `plan`, or `apply` reports an `x509`, unknown authority, or certificate trust error, repeat the certificate installation from the shared README. Download a fresh certificate after recreating the Floci-AZ data or TLS files.
 
 ### Port already in use
 
@@ -182,9 +186,9 @@ Get-NetTCPConnection -LocalPort 4500,4501,4577 -ErrorAction SilentlyContinue
 
 ### UI does not show a Terraform resource
 
-Use `terraform state list` and the REST checks above; UI visibility does not determine resource existence.
+Use `terraform state list` and the direct Floci-AZ REST checks above. UI visibility and resource existence are separate concerns.
 
-## 🎯 What this lab demonstrates
+## What this lab demonstrates
 
 - Redirecting the AzureRM provider to a local Azure-compatible endpoint
 - Creating related resources through Terraform dependencies

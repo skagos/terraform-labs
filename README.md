@@ -1,8 +1,8 @@
-# 🧪 Floci-AZ Terraform Labs
+# Floci-AZ Terraform Labs
 
 This folder contains Terraform labs that run against Floci-AZ, a local Azure-compatible emulator. The labs do not require an Azure subscription and should not create resources in Azure.
 
-## 🛠️ Requirements
+## Requirements
 
 Install the following tools:
 
@@ -21,7 +21,7 @@ git --version
 
 Docker Desktop must be running.
 
-## 📁 Folder layout
+## Repository structure
 
 Keep `floci-ui` beside the lab directories:
 
@@ -35,7 +35,7 @@ Labs/
 
 `floci-ui/` is an independently versioned upstream runtime dependency. The parent repository ignores it except for the lab-specific Compose override.
 
-## 🚀 Install Floci UI
+## Install Floci UI
 
 From the `Labs` directory:
 
@@ -80,7 +80,7 @@ Invoke-RestMethod http://localhost:4501/api/clouds/azure/status
 
 The UI is available at <http://localhost:4500>.
 
-## 🔐 Trust the Floci-AZ certificate
+## Trust the Floci-AZ certificate
 
 The AzureRM provider performs metadata discovery over HTTPS at `localhost:4577`. Floci-AZ generates a self-signed certificate, so Windows does not trust it automatically.
 
@@ -102,6 +102,6 @@ Import-Certificate `
 
 This current-user trust normally needs no elevation. Git ignores the generated certificate. If Floci-AZ regenerates TLS files, download and import the new certificate; trust only your local emulator's certificate.
 
-## ▶️ Run Lab 01
+## Run Lab 01
 
 Continue with [`lab01/README-Floci-AZ-Lab01.md`](lab01/README-Floci-AZ-Lab01.md) for the Terraform workflow, verification commands, cleanup, and troubleshooting.
