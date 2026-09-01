@@ -1,0 +1,14 @@
+services:
+
+  floci-az:
+    environment:
+      FLOCI_AZ_TLS_ENABLED: "true"
+      FLOCI_AZ_HOSTNAME: "floci-az"
+      FLOCI_AZ_STORAGE_MODE: "memory"
+    volumes:
+      - ./azure-data:/app/data
+
+  floci-api:
+    environment:
+      FLOCI_AZURE_ENDPOINT: "http://floci-az:4577"
+      FLOCI_AZURE_ACCOUNT_NAME: "lab01storage001"
