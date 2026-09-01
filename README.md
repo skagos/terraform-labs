@@ -1,8 +1,8 @@
-# Floci-AZ Terraform Labs
+# 🧪 Floci-AZ Terraform Labs
 
 This folder contains Terraform labs that run against Floci-AZ, a local Azure-compatible emulator. The labs do not require an Azure subscription and should not create resources in Azure.
 
-## Requirements
+## 🛠️ Requirements
 
 Install the following tools:
 
@@ -12,8 +12,6 @@ Install the following tools:
 - Windows PowerShell 5.1 or PowerShell 7
 - Floci UI, cloned locally as described below
 
-Verify the command-line tools:
-
 ```powershell
 docker --version
 docker compose version
@@ -21,9 +19,9 @@ terraform version
 git --version
 ```
 
-Docker Desktop must be running before starting the emulator.
+Docker Desktop must be running.
 
-## Folder layout
+## 📁 Folder layout
 
 Keep `floci-ui` beside the lab directories:
 
@@ -35,9 +33,9 @@ Labs/
 `-- lab01/
 ```
 
-The entire `floci-ui/` directory is ignored by the parent `.gitignore`. It is an independently versioned upstream project and a runtime requirement, not source code belonging to these labs.
+`floci-ui/` is an independently versioned upstream runtime dependency. The parent repository ignores it except for the lab-specific Compose override.
 
-## Install Floci UI
+## 🚀 Install Floci UI
 
 From the `Labs` directory:
 
@@ -64,14 +62,7 @@ services:
       FLOCI_AZURE_ACCOUNT_NAME: "lab01storage001"
 ```
 
-Docker Compose automatically merges this override with the upstream `docker-compose.yml` in the same directory. The override exists so the upstream clone remains mostly unchanged while the lab adds its local Azure-specific settings:
-
-- `FLOCI_AZ_TLS_ENABLED` enables Floci-AZ's TLS endpoint, which AzureRM needs for metadata discovery.
-- `FLOCI_AZ_HOSTNAME` sets the hostname used by the emulator-generated certificate inside the Compose network.
-- `FLOCI_AZ_STORAGE_MODE=memory` keeps emulated Azure resources ephemeral; restarting or recreating the service may remove them.
-- `./azure-data:/app/data` preserves Floci-AZ runtime data such as generated TLS material on the host.
-- `FLOCI_AZURE_ENDPOINT` tells the API container to reach Floci-AZ by its Compose service name. This is an internal container-to-container URL, so it remains HTTP.
-- `FLOCI_AZURE_ACCOUNT_NAME` supplies the storage account name expected by the UI integration for this lab.
+Docker Compose merges this with upstream `docker-compose.yml`. It enables TLS, uses the Compose hostname, keeps resources ephemeral, persists generated runtime data, connects the API internally over HTTP, and supplies Lab 01's storage account name.
 
 Start only the services required by Lab 01:
 
@@ -89,7 +80,7 @@ Invoke-RestMethod http://localhost:4501/api/clouds/azure/status
 
 The UI is available at <http://localhost:4500>.
 
-## Trust the Floci-AZ certificate
+## 🔐 Trust the Floci-AZ certificate
 
 The AzureRM provider performs metadata discovery over HTTPS at `localhost:4577`. Floci-AZ generates a self-signed certificate, so Windows does not trust it automatically.
 
@@ -109,10 +100,8 @@ Import-Certificate `
   -CertStoreLocation Cert:\CurrentUser\Root
 ```
 
-This does not trust the certificate machine-wide and normally does not require an elevated PowerShell session. The downloaded `floci-az.crt` is local generated material and is ignored by Git.
+This current-user trust normally needs no elevation. Git ignores the generated certificate. If Floci-AZ regenerates TLS files, download and import the new certificate; trust only your local emulator's certificate.
 
-If Floci-AZ regenerates its TLS files, download and import the new certificate again. Only trust a certificate obtained from the local emulator you started.
-
-## Run Lab 01
+## ▶️ Run Lab 01
 
 Continue with [`lab01/README-Floci-AZ-Lab01.md`](lab01/README-Floci-AZ-Lab01.md) for the Terraform workflow, verification commands, cleanup, and troubleshooting.
