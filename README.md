@@ -2,6 +2,8 @@
 
 This folder contains Terraform labs that run against Floci-AZ, a local Azure-compatible emulator. The labs do not require an Azure subscription and should not create resources in Azure.
 
+![Floci-AZ Terraform labs](image.png)
+
 ## Requirements
 
 Install the following tools:
@@ -30,7 +32,8 @@ Labs/
 |-- README.md
 |-- .gitignore
 |-- floci-ui/
-`-- lab01/
+|-- lab01/
+`-- lab02/
 ```
 
 `floci-ui/` is an independently versioned upstream runtime dependency. The parent repository ignores it except for the lab-specific Compose override.
@@ -105,3 +108,7 @@ This current-user trust normally needs no elevation. Git ignores the generated c
 ## Run Lab 01
 
 Continue with [`lab01/README-Floci-AZ-Lab01.md`](lab01/README-Floci-AZ-Lab01.md) for the Terraform workflow, verification commands, cleanup, and troubleshooting.
+
+## Run Lab 02
+
+Continue with [`lab02/README-Floci-AZ-Lab02.md`](lab02/README-Floci-AZ-Lab02.md) for a two-tier network, security rules, private blob storage, variables, and `for_each`.
